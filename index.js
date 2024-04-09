@@ -48,29 +48,29 @@ app.get("/api/users",async (req,res)=>{
 app.post("/api/users/:id/exercises",async (req,res)=>{
   const {description,duration,date}=req.body;
   const userId =req.params;
+  const user= await User.findOne({_id: userId})
+  console.log('user:',user)
   const exercise = new Exercise({
-      userId: userId['id'],
+      userId: user['_id'],
       description: description,
       duration: duration,
       date:date});
+
     await exercise.save();
 
-  const user= await User({_id:userId})
-  console.log('user:',user)
+  
 
-  const createdEx=await Exercise({userId:userId['id']});
+  const createdEx=await Exercise({userId: user['_id']});
   console.log("created exercise:",createdEx);
   res.json(
     {
-      username:'sibhat',
-      description:description,
-      duration: duration,
-      date:date,
+      username:createdEx['userId'],
+      description: createdEx['description'],
+      duration: createdEx['duration'],
+      date: createdEx['date'],
       _id: createdEx['_id']
     })
 
-
-  
 })
 
 
