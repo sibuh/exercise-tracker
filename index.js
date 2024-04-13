@@ -30,12 +30,8 @@ app.post("/api/users",async(req,res)=>{
   try {
     const { username} = req.body;
     console.log(username);
-    // const user = new User({username:username});
-    // await user.save();
     let user={username:username,_id:objectId};
     users.push(user)
-
-    // const createdUser=await User.findOne({username:username})
 
     res.json(user);
   } catch (err) {
@@ -44,49 +40,29 @@ app.post("/api/users",async(req,res)=>{
 
 });
 app.get("/api/users",async (req,res)=>{
-  // let result=[]
-  // const users= await User.find();
-  // for (let user of users){
-  //   result.push({username: 'sibhat',_id:user['_id']})
-  // }
-  // console.log("result:",result);
   res.json(users);
 });
 
-app.post("/api/users/:id/exercises", (req,res)=>{
+app.post("/api/users/:_id/exercises", (req,res)=>{
   const {description,duration,date}=req.body;
   console.log(description,duration,date)
-  const userId =req.params;
-  const objectId=new mongoose.Types.ObjectId()
-
-  // const user= await User.findOne({_id: userId});
-  // console.log("retrieved user:",user);
-  // const exercise = new Exercise({
-  //     userId: user['_id'],
-  //     description: description,
-  //     duration: duration,
-  //     date:date
-  //   });
-
-  //   await exercise.save();
+  const param =req.params;
+  console.log("param:",param)
   let username;
   for(let user of users){
-    if (user['_id']==userId){
+    if (user['_id']==param['_id']){
       username=user['username'];
     }
   }
   let exercise={
-    username:username,
-    description:description,
-    duration:duration,
-    date:new Date(),
-    _id:userId['id'],
+    username:username.toString(),
+    description:description.toString(),
+    duration:parseInt(duration),
+    date:new Date().toDateString(),
+    _id:param['_id'],
   }
-
+  console.log(exercise);
   exercises.push(exercise);
-
-  // const createdEx = await Exercise.findOne({userId: user['_id']});
-  // console.log("created exercise:",createdEx)
   res.json(exercise)
 
 })
@@ -94,20 +70,20 @@ app.get('/api/users/:_id/logs',(req,res)=>{
   let log=[];
   const params =req.params;
   for (let ex of exercises){
-    if (ex['userId']==params['_id']){
+    if (ex['_id']==params['_id']){
       log.push({
-        description: ex['description'],
-        duration: ex['duration'],
-        date: ex['date'].toDateString()
+        description: ex['description'].toString(),
+        duration: parseInt(ex['duration']),
+        date: new Date().toDateString()
     })
 
     }
 
   }
-
+  console.log("logs:",log)
   res.json({
     username:params['_id'],
-    count:length(log),
+    count:log.length,
     log:log
   })
 
