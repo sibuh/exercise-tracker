@@ -76,12 +76,11 @@ app.post("/api/users/:id/exercises", (req,res)=>{
     }
   }
   let exercise={
-    _id:objectId,
     username:username,
-    userId:userId,
     description:description,
     duration:duration,
-    date:date | new Date()
+    date:new Date(),
+    _id:userId['id'],
   }
 
   exercises.push(exercise);
@@ -91,7 +90,28 @@ app.post("/api/users/:id/exercises", (req,res)=>{
   res.json(exercise)
 
 })
+app.get('/api/users/:_id/logs',(req,res)=>{
+  let log=[];
+  const params =req.params;
+  for (let ex of exercises){
+    if (ex['userId']==params['_id']){
+      log.push({
+        description: ex['description'],
+        duration: ex['duration'],
+        date: ex['date'].toDateString()
+    })
 
+    }
+
+  }
+
+  res.json({
+    username:params['_id'],
+    count:length(log),
+    log:log
+  })
+
+});
 
 
 
